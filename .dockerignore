@@ -1,0 +1,42 @@
+.git
+.github
+.gitignore
+.agents
+.claude
+.idea
+.vscode
+
+# Segredos — apenas .env.example entra na imagem
+.env
+.env.backup
+.env.production
+.env.*
+!.env.example
+
+# Dependências (reinstaladas no build)
+node_modules
+vendor
+
+# Artefatos de build/frontend
+public/build
+public/hot
+public/storage
+
+# Caches regenerados no build
+bootstrap/cache/*
+!bootstrap/cache/.gitignore
+
+# SQLite residual
+database/database.sqlite
+
+# Logs e ferramentas locais
+storage/inertia-devtools
+storage/pail
+storage/logs/*.log
+
+# Documentação e configurações do assistente
+docs
+tests
+opencode.json
+boost.json
+pnpm-workspace.yaml

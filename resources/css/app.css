@@ -1,0 +1,1042 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@theme {
+    --font-sans:
+        'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-card:
+        'Oswald', 'Arial Narrow Bold', 'Franklin Gothic Medium', 'Arial Black',
+        ui-sans-serif, system-ui, sans-serif;
+    --font-display:
+        'Oswald', 'Arial Narrow Bold', 'Franklin Gothic Medium', 'Arial Black',
+        ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ============================================================
+   Nocturne design system — tokens
+   Source: docs design bundle (_ds/nocturne). Every colour, font,
+   spacing and radius below is the system's source of truth: take
+   values from these variables, never hard-code a hex.
+   ============================================================ */
+:root {
+    --color-bg: #161826;
+    --color-surface: #232532;
+    --color-text: #e9e9ed;
+    --color-accent: #9184d9;
+    --color-accent-2: #a7a1db;
+    --color-divider: color-mix(in srgb, #e9e9ed 16%, transparent);
+
+    --color-neutral-100: #f3f5fe;
+    --color-neutral-200: #e4e7f5;
+    --color-neutral-300: #cfd3e5;
+    --color-neutral-400: #b2b6ca;
+    --color-neutral-500: #9397ab;
+    --color-neutral-600: #75798c;
+    --color-neutral-700: #595d6c;
+    --color-neutral-800: #3f424d;
+    --color-neutral-900: #292b31;
+
+    --color-accent-100: #f5f4ff;
+    --color-accent-200: #e7e5fe;
+    --color-accent-300: #d2cefd;
+    --color-accent-400: #b5abfc;
+    --color-accent-500: #968ae0;
+    --color-accent-600: #796cbf;
+    --color-accent-700: #5d5294;
+    --color-accent-800: #423a6a;
+    --color-accent-900: #2b2741;
+
+    --color-accent-2-400: #b5afe8;
+    --color-accent-2-600: #7972a9;
+    --color-accent-2-700: #5c5783;
+
+    --color-section: #262a60;
+    --color-section-glow: #353b80;
+
+    /* App ground — a shade below the system ground, as the prototype paints it. */
+    --color-app-bg: #0d0f1a;
+    --color-app-bg-deep: #0a0b12;
+
+    --space-1: 2.8px;
+    --space-2: 5.6px;
+    --space-3: 8.4px;
+    --space-4: 11.2px;
+    --space-6: 16.8px;
+    --space-8: 22.4px;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 14px;
+
+    --shadow-sm: 0 0 0 1px #3f424d;
+    --shadow-md: 0 0 0 1px #595d6c, 0 6px 18px rgba(0, 0, 0, 0.55);
+    --shadow-lg: 0 0 0 1px #9397ab, 0 16px 40px rgba(0, 0, 0, 0.65);
+}
+
+/* ============================================================
+   Player card — FIFA-Ultimate-Team-inspired layout.
+
+   Sizing: the slot owns the width and is an inline-size container;
+   the card derives its font-size from the slot (15em == slot width),
+   so every internal measure is proportional and the card can never be
+   wider than the grid cell it sits in. That containment is what keeps
+   cards from overlapping each other.
+   ============================================================ */
+.pcard-slot {
+    container-type: inline-size;
+    width: 100%;
+    max-width: var(--pcard-max, 132px);
+}
+
+.pcard-slot--lg {
+    --pcard-max: 232px;
+}
+
+.pcard {
+    /* 100cqw / 15 — keeps `width: 15em` exactly equal to the slot width. */
+    font-size: 6.6667cqw;
+
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    width: 15em;
+    aspect-ratio: 3 / 4;
+    padding: 0.9em 0.85em 0.7em;
+    overflow: hidden;
+    border-radius: 0.85em;
+    color: var(--pcard-ink, #fff);
+    font-family: var(--font-card);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    user-select: none;
+    background:
+        radial-gradient(
+            120% 55% at 50% -8%,
+            var(--pcard-sheen),
+            transparent 62%
+        ),
+        linear-gradient(
+            163deg,
+            var(--pcard-from) 0%,
+            var(--pcard-via) 52%,
+            var(--pcard-to) 100%
+        );
+    box-shadow:
+        0 1em 2.2em -0.9em var(--pcard-glow),
+        inset 0 0 0 0.08em var(--pcard-edge);
+}
+
+/* Inner hairline, the frame every rarity shares. */
+.pcard::before {
+    content: '';
+    position: absolute;
+    inset: 0.28em;
+    z-index: 0;
+    border: 0.06em solid var(--pcard-edge);
+    border-radius: 0.6em;
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.pcard > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* — top: identity block + portrait — */
+.pcard__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.3em;
+    flex: none;
+}
+
+.pcard__id {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.12em;
+    padding-top: 0.15em;
+    min-width: 3.1em;
+}
+
+.pcard__ovr {
+    font-size: 2.9em;
+    font-weight: 700;
+    line-height: 0.86;
+    text-shadow: 0 0.05em 0.1em rgba(0, 0, 0, 0.35);
+}
+
+.pcard__pos {
+    font-size: 0.95em;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    opacity: 0.9;
+}
+
+.pcard__divider {
+    width: 1.7em;
+    height: 0.08em;
+    margin: 0.12em 0;
+    background: currentColor;
+    opacity: 0.4;
+}
+
+.pcard__flag {
+    font-size: 1.05em;
+    line-height: 1;
+}
+
+.pcard__portrait {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 6.4em;
+    height: 6.4em;
+    margin-right: -0.2em;
+    flex: none;
+}
+
+.pcard__portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    filter: drop-shadow(0 0.3em 0.5em rgba(0, 0, 0, 0.45));
+}
+
+.pcard__initials {
+    display: grid;
+    place-items: center;
+    width: 4.5em;
+    height: 4.5em;
+    border-radius: 50%;
+    border: 0.14em solid var(--pcard-edge);
+    background: radial-gradient(
+        circle at 34% 28%,
+        var(--pcard-sheen),
+        var(--pcard-to) 78%
+    );
+    font-size: 1.25em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0.05em 0.1em rgba(0, 0, 0, 0.4);
+}
+
+/* — name — */
+.pcard__name {
+    margin-top: 0.25em;
+    padding-bottom: 0.3em;
+    border-bottom: 0.07em solid var(--pcard-edge);
+    font-size: 1.5em;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 0.05em 0.12em rgba(0, 0, 0, 0.4);
+    flex: none;
+}
+
+/* — stats: two columns of three, as the reference layout arranges them — */
+.pcard__stats {
+    display: grid;
+    grid-template-columns: 1fr 0.07em 1fr;
+    align-items: center;
+    column-gap: 0.55em;
+    row-gap: 0.12em;
+    margin-top: 0.4em;
+    flex: 1;
+    align-content: center;
+}
+
+.pcard__rule {
+    grid-row: 1 / -1;
+    grid-column: 2;
+    width: 100%;
+    height: 100%;
+    background: var(--pcard-edge);
+    opacity: 0.5;
+}
+
+.pcard__stat {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35em;
+}
+
+.pcard__stat b {
+    font-size: 1.25em;
+    font-weight: 700;
+    min-width: 1.6em;
+    text-align: right;
+}
+
+.pcard__stat span {
+    font-size: 0.92em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+}
+
+.pcard__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5em;
+    margin-top: 0.3em;
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    opacity: 0.75;
+    flex: none;
+}
+
+.pcard__foot span {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.pcard__foot span:first-child {
+    flex: none;
+}
+
+.pcard__foot span:last-child {
+    flex: 1;
+    text-align: right;
+}
+
+/* — grid: every card listing in the app shares this so cards render at the
+   exact same pixel size everywhere, regardless of how many fit in a row or
+   how wide the surrounding page is. Column width is fixed (not `1fr`), so
+   cards never stretch; leftover row space is absorbed as outer whitespace
+   via `justify-content: center` instead of inflating each card. — */
+.pcard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 132px);
+    justify-content: center;
+    gap: 14px 10px;
+}
+
+/* — rarity themes: background, gradient, border and ink per tier — */
+.pcard--bronze {
+    --pcard-from: #e0aa72;
+    --pcard-via: #a56c2c;
+    --pcard-to: #5d3811;
+    --pcard-edge: #f3cda1;
+    --pcard-sheen: rgba(255, 231, 204, 0.5);
+    --pcard-glow: rgba(190, 122, 52, 0.55);
+    --pcard-ink: #fff6ec;
+}
+
+.pcard--silver {
+    --pcard-from: #f2f6fb;
+    --pcard-via: #b3bfcc;
+    --pcard-to: #6c7885;
+    --pcard-edge: #ffffff;
+    --pcard-sheen: rgba(255, 255, 255, 0.75);
+    --pcard-glow: rgba(178, 192, 208, 0.6);
+    --pcard-ink: #1c2430;
+}
+
+.pcard--gold {
+    --pcard-from: #ffeeae;
+    --pcard-via: #dfb43c;
+    --pcard-to: #8a5f0d;
+    --pcard-edge: #fff4c9;
+    --pcard-sheen: rgba(255, 248, 214, 0.65);
+    --pcard-glow: rgba(228, 176, 52, 0.65);
+    --pcard-ink: #2a1d02;
+}
+
+.pcard--legend {
+    --pcard-from: #ffffff;
+    --pcard-via: #f6f1e2;
+    --pcard-to: #ddcda1;
+    --pcard-edge: #c9a227;
+    --pcard-sheen: rgba(255, 255, 255, 0.9);
+    --pcard-glow: rgba(201, 162, 39, 0.7);
+    --pcard-ink: #33290d;
+}
+
+/* Legend gets the premium treatment: a gold inner rail and a slow sweep. */
+.pcard--legend::before {
+    border-width: 0.09em;
+    opacity: 0.9;
+}
+
+.pcard--legend::after {
+    content: '';
+    position: absolute;
+    inset: -30% -60%;
+    z-index: 0;
+    background: linear-gradient(
+        104deg,
+        transparent 42%,
+        rgba(255, 255, 255, 0.75) 50%,
+        transparent 58%
+    );
+    animation: pcardSweep 4.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pcardSweep {
+    0%,
+    62% {
+        transform: translateX(-38%);
+    }
+    100% {
+        transform: translateX(38%);
+    }
+}
+
+.pcard--inactive {
+    filter: grayscale(0.9) brightness(0.82);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pcard--legend::after {
+        animation: none;
+    }
+}
+
+/* ============================================================
+   IBFC interface layer — Nocturne applied to the app shell.
+   Corner notches (clip-path), the hex badge and the accent-outline
+   button are the system's signatures; keep them consistent.
+   ============================================================ */
+
+/* — shell — */
+.app-shell {
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            90% 42% at 50% -6%,
+            rgba(145, 132, 217, 0.22),
+            transparent 70%
+        ),
+        radial-gradient(
+            70% 40% at 8% 104%,
+            rgba(38, 42, 96, 0.6),
+            transparent 72%
+        ),
+        linear-gradient(180deg, var(--color-app-bg), var(--color-app-bg-deep));
+    background-attachment: fixed;
+    color: var(--color-text);
+}
+
+.app-grid-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(233, 233, 237, 0.05) 0 1px,
+            transparent 1px 42px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            rgba(233, 233, 237, 0.035) 0 1px,
+            transparent 1px 42px
+        );
+    mask-image: linear-gradient(180deg, #000, transparent 62%);
+}
+
+.app-led {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 50;
+    display: flex;
+    gap: 3px;
+    padding: 0 10px;
+    pointer-events: none;
+}
+
+.app-led > i {
+    flex: 1;
+    background: var(--color-accent);
+    animation: led 2.6s ease-in-out infinite;
+}
+
+.app-led > i:nth-child(2) {
+    background: var(--color-accent-400);
+    animation-delay: 0.35s;
+}
+.app-led > i:nth-child(3) {
+    animation-delay: 0.7s;
+}
+.app-led > i:nth-child(4) {
+    background: var(--color-accent-600);
+    animation-delay: 1.05s;
+}
+.app-led > i:nth-child(5) {
+    background: var(--color-accent-400);
+    animation-delay: 1.4s;
+}
+.app-led > i:nth-child(6) {
+    animation-delay: 1.75s;
+}
+
+/* — type — */
+.u-display {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: 0.01em;
+}
+
+.u-kicker {
+    font-size: 9px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--color-accent-300);
+}
+
+.u-meta {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--color-neutral-500);
+}
+
+/* — notched surfaces — */
+.nc-panel {
+    background: linear-gradient(
+        155deg,
+        rgba(35, 37, 50, 0.92),
+        rgba(19, 21, 33, 0.92)
+    );
+    border: 1px solid var(--color-neutral-800);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+
+.nc-panel--br {
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 14px),
+        calc(100% - 14px) 100%,
+        0 100%
+    );
+}
+
+.nc-panel--accent {
+    background: linear-gradient(120deg, var(--color-section), #141628);
+    border-color: var(--color-accent-700);
+}
+
+.nc-panel--top {
+    border-top: 2px solid var(--color-accent-600);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+.nc-hex {
+    display: grid;
+    place-items: center;
+    background: linear-gradient(
+        150deg,
+        var(--color-accent-700),
+        var(--color-section)
+    );
+    clip-path: polygon(50% 0, 100% 26%, 100% 74%, 50% 100%, 0 74%, 0 26%);
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: #fff;
+}
+
+/* — buttons — */
+.nc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 12px 16px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border-radius: 0;
+    border: 1px solid var(--color-accent);
+    background: rgba(145, 132, 217, 0.08);
+    color: var(--color-accent-200);
+    transition:
+        background 0.18s,
+        color 0.18s,
+        border-color 0.18s;
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 12px),
+        calc(100% - 12px) 100%,
+        0 100%
+    );
+}
+
+.nc-btn:hover {
+    background: rgba(145, 132, 217, 0.2);
+    color: #fff;
+}
+.nc-btn:active {
+    background: rgba(145, 132, 217, 0.32);
+}
+.nc-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.nc-btn--quiet {
+    background: transparent;
+    border-color: var(--color-neutral-700);
+    color: var(--color-neutral-400);
+    clip-path: none;
+}
+
+.nc-btn--quiet:hover {
+    border-color: var(--color-accent-400);
+    color: var(--color-accent-200);
+    background: transparent;
+}
+
+.nc-btn--danger:hover {
+    border-color: #e0778f;
+    color: #ffd9e0;
+    background: rgba(224, 119, 143, 0.12);
+}
+
+.nc-btn--sm {
+    padding: 8px 12px;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    font-weight: 700;
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 9px),
+        calc(100% - 9px) 100%,
+        0 100%
+    );
+}
+
+/* — inputs — */
+.nc-input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--color-text);
+    caret-color: var(--color-accent);
+    background: rgba(35, 37, 50, 0.85);
+    border: 1px solid var(--color-neutral-800);
+    border-radius: 0;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    transition: border-color 0.16s;
+}
+
+.nc-input:hover {
+    border-color: var(--color-neutral-700);
+}
+.nc-input:focus {
+    border-color: var(--color-accent);
+    outline: none;
+}
+.nc-input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+}
+.nc-input::placeholder {
+    color: var(--color-neutral-600);
+}
+
+select.nc-input option {
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.nc-label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-neutral-500);
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+/* — range — */
+.nc-range {
+    width: 100%;
+    height: 22px;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.nc-range::-webkit-slider-runnable-track {
+    height: 6px;
+    background: rgba(41, 43, 49, 0.9);
+    border: 1px solid var(--color-neutral-800);
+}
+
+.nc-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    margin-top: -6px;
+    background: var(--color-accent-300);
+    border: 1px solid var(--color-accent);
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.nc-range::-moz-range-track {
+    height: 6px;
+    background: rgba(41, 43, 49, 0.9);
+    border: 1px solid var(--color-neutral-800);
+}
+
+.nc-range::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 0;
+    background: var(--color-accent-300);
+    border: 1px solid var(--color-accent);
+}
+
+.nc-range:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+}
+
+/* — tabs / segmented filter — */
+.nc-tabs {
+    display: flex;
+    border: 1px solid var(--color-neutral-800);
+    background: rgba(22, 24, 38, 0.8);
+}
+
+.nc-tab {
+    flex: 1;
+    padding: 9px 4px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--color-neutral-500);
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    transition:
+        color 0.16s,
+        background 0.16s;
+}
+
+.nc-tab:hover {
+    color: var(--color-accent-300);
+}
+
+.nc-tab.is-on {
+    color: var(--color-accent-200);
+    background: rgba(145, 132, 217, 0.14);
+    border-bottom-color: var(--color-accent);
+}
+
+/* — tags — */
+.nc-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-radius: 0;
+}
+
+.nc-tag--accent {
+    background: var(--color-accent-800);
+    color: var(--color-accent-100);
+}
+.nc-tag--neutral {
+    background: var(--color-neutral-800);
+    color: var(--color-neutral-100);
+}
+.nc-tag--outline {
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+}
+
+/* — attribute bars — */
+.nc-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(41, 43, 49, 0.9);
+    overflow: hidden;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+}
+
+.nc-bar__fill {
+    height: 100%;
+    transform-origin: left;
+    animation: barFill 0.7s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+    background: linear-gradient(
+        90deg,
+        var(--color-accent-700),
+        var(--bar-color, var(--color-accent-400))
+    );
+}
+
+/* — list rows — */
+.nc-row {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 12px;
+    background: rgba(35, 37, 50, 0.72);
+    border: 1px solid var(--color-neutral-800);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 11px 100%, 0 calc(100% - 11px));
+    transition:
+        background 0.16s,
+        border-color 0.16s;
+}
+
+.nc-row:hover {
+    border-color: var(--color-accent);
+    background: rgba(145, 132, 217, 0.1);
+}
+
+/* — bottom navigation — */
+.nc-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: flex;
+    background: linear-gradient(
+        180deg,
+        rgba(13, 15, 26, 0.86),
+        rgba(9, 10, 18, 0.98)
+    );
+    border-top: 1px solid var(--color-neutral-800);
+    backdrop-filter: blur(12px);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.nc-nav__item {
+    flex: 1;
+    position: relative;
+    padding: 9px 2px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    color: var(--color-neutral-600);
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    transition: color 0.16s;
+}
+
+.nc-nav__item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 22%;
+    right: 22%;
+    height: 2px;
+    background: transparent;
+    transition: background 0.16s;
+}
+
+.nc-nav__item:hover {
+    color: var(--color-accent-300);
+}
+.nc-nav__item.is-on {
+    color: var(--color-accent-200);
+}
+.nc-nav__item.is-on::before {
+    background: var(--color-accent);
+}
+
+/* — card hover lift, used wherever a FIFA card is a link — */
+.nc-lift {
+    transition:
+        transform 0.18s,
+        filter 0.18s;
+}
+.nc-lift:hover {
+    transform: translateY(-4px) scale(1.03);
+    filter: drop-shadow(0 0 12px rgba(145, 132, 217, 0.55));
+}
+
+.noscroll {
+    scrollbar-width: none;
+}
+.noscroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* — motion — */
+@keyframes led {
+    0%,
+    100% {
+        opacity: 0.2;
+    }
+    40% {
+        opacity: 1;
+    }
+    62% {
+        opacity: 0.35;
+    }
+}
+@keyframes upIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+@keyframes cascIn {
+    from {
+        opacity: 0;
+        transform: translateX(30px) rotateY(-10deg);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+@keyframes barFill {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+@keyframes packIn {
+    0% {
+        opacity: 0;
+        transform: perspective(900px) rotateY(64deg) scale(0.84);
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+        transform: perspective(900px) rotateY(0deg) scale(1);
+    }
+}
+@keyframes pulseRing {
+    0%,
+    100% {
+        box-shadow:
+            0 0 0 1px var(--color-accent),
+            0 0 16px -2px rgba(145, 132, 217, 0.5);
+    }
+    50% {
+        box-shadow:
+            0 0 0 1px var(--color-accent-300),
+            0 0 32px 1px rgba(145, 132, 217, 0.85);
+    }
+}
+
+.st > * {
+    animation: cascIn 0.46s cubic-bezier(0.16, 0.84, 0.3, 1) both;
+}
+.stu > * {
+    animation: upIn 0.42s cubic-bezier(0.16, 0.84, 0.3, 1) both;
+}
+.st > *:nth-child(1),
+.stu > *:nth-child(1) {
+    animation-delay: 0.02s;
+}
+.st > *:nth-child(2),
+.stu > *:nth-child(2) {
+    animation-delay: 0.07s;
+}
+.st > *:nth-child(3),
+.stu > *:nth-child(3) {
+    animation-delay: 0.12s;
+}
+.st > *:nth-child(4),
+.stu > *:nth-child(4) {
+    animation-delay: 0.17s;
+}
+.st > *:nth-child(5),
+.stu > *:nth-child(5) {
+    animation-delay: 0.22s;
+}
+.st > *:nth-child(6),
+.stu > *:nth-child(6) {
+    animation-delay: 0.27s;
+}
+.st > *:nth-child(7),
+.stu > *:nth-child(7) {
+    animation-delay: 0.32s;
+}
+.st > *:nth-child(8),
+.stu > *:nth-child(8) {
+    animation-delay: 0.36s;
+}
+.st > *:nth-child(9),
+.stu > *:nth-child(9) {
+    animation-delay: 0.4s;
+}
+.st > *:nth-child(10),
+.stu > *:nth-child(10) {
+    animation-delay: 0.44s;
+}
+.st > *:nth-child(n + 11),
+.stu > *:nth-child(n + 11) {
+    animation-delay: 0.48s;
+}
+
+.anim-pack {
+    animation: packIn 0.72s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+}
+.anim-pulse {
+    animation: pulseRing 3.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .st > *,
+    .stu > *,
+    .anim-pack,
+    .anim-pulse,
+    .nc-bar__fill,
+    .app-led > i {
+        animation: none !important;
+    }
+    .nc-lift {
+        transition: none;
+    }
+}

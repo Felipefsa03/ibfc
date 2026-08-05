@@ -1,0 +1,24 @@
+name: ibfc
+
+# ==============================================================================
+# Override de PRODUÇÃO.
+# Uso: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# O que muda:
+#   - Builda a imagem com vendor sem dependências de desenvolvimento (--no-dev)
+#   - APP_ENV=production (o entrypoint roda optimize, config:cache, route:cache,
+#     view:cache e event:cache automaticamente)
+#   - APP_DEBUG=false e LOG_LEVEL=warning (segurança)
+#   - O arquivo .env do servidor continua montado e é a fonte de credenciais
+# ==============================================================================
+
+services:
+  app:
+    build:
+      args:
+        APP_ENV: production
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      LOG_CHANNEL: daily
+      LOG_LEVEL: warning
