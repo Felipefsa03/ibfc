@@ -33,7 +33,7 @@ class PlayerStatisticsService
     public function aggregateQuery(?Carbon $since = null): QueryBuilder
     {
         $anyTeamWon = DB::table('teams')
-            ->select('match_day_id', DB::raw('MAX(won) as any_won'))
+            ->select('match_day_id', DB::raw('MAX(CASE WHEN won THEN 1 ELSE 0 END) as any_won'))
             ->groupBy('match_day_id');
 
         return DB::table('player_day_stats as pds')
@@ -53,8 +53,8 @@ class PlayerStatisticsService
                 DB::raw('SUM(pds.assists) as assists'),
                 DB::raw('SUM(pds.decisive_passes) as decisive_passes'),
                 DB::raw('AVG(pds.stars) as avg_stars'),
-                DB::raw('SUM(CASE WHEN t.won = 1 THEN 1 ELSE 0 END) as wins'),
-                DB::raw('SUM(CASE WHEN t.won = 0 AND aw.any_won = 1 THEN 1 ELSE 0 END) as losses'),
+                DB::raw('SUM(CASE WHEN t.won THEN 1 ELSE 0 END) as wins'),
+                DB::raw('SUM(CASE WHEN t.won = false AND aw.any_won = 1 THEN 1 ELSE 0 END) as losses'),
                 DB::raw('SUM(CASE WHEN aw.any_won = 0 THEN 1 ELSE 0 END) as draws'),
             ]);
     }

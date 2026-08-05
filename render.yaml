@@ -1,0 +1,84 @@
+# ==============================================================================
+# Render Blueprint — IBFC (Laravel 13 + Inertia + React)
+#
+# Como usar:
+#   1) Envie este arquivo para o GitHub (junto com o Dockerfile da raiz).
+#   2) No dashboard da Render: New -> Blueprint -> escolha o repositório.
+#   3) A Render cria o web service + Postgres e faz o deploy automático.
+#
+# Alternativa via CLI: `render blueprint launch` (após `render login`).
+#
+# Observações do plano gratuito:
+#   - Web service entra em sleep após ~15 min sem tráfego (cold start ~1 min).
+#   - O Postgres free expira após 30 dias (14 dias de carência, depois é
+#     apagado). Upgrade para plano pago remove a expiração.
+#   - Uploads ficam no disco efêmero do container. Para persistir, use S3/R2.
+# ==============================================================================
+
+services:
+  - type: web
+    name: ibfc
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: sao-paulo
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: IBFC
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        fromService:
+          type: web
+          name: ibfc
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: warning
+      # Banco (Postgres gerenciado pela Render)
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: ibfc-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: ibfc-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: ibfc-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: ibfc-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: ibfc-db
+          property: password
+      # Drivers internos do Laravel (tabelas nas migrations)
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: FILESYSTEM_DISK
+        value: local
+      # Entrypoint executa php artisan migrate --force na subida.
+      - key: RUN_MIGRATIONS
+        value: "true"
+
+databases:
+  - name: ibfc-db
+    plan: free
+    databaseName: ibfc
+    user: ibfc

@@ -30,8 +30,8 @@ class CardController extends Controller
             ->leftJoinSub($this->stats->aggregateQuery(), 'agg', 'agg.player_id', '=', 'players.id')
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
-                    $query->where('players.name', 'like', "%{$search}%")
-                        ->orWhere('players.nickname', 'like', "%{$search}%");
+                    $query->whereLike('players.name', "%{$search}%")
+                        ->orWhereLike('players.nickname', "%{$search}%");
                 });
             })
             ->when(in_array($status, ['active', 'inactive'], true), function ($query) use ($status) {

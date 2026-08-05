@@ -23,8 +23,8 @@ class PlayerController extends Controller
         $players = Player::query()
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%")
-                        ->orWhere('nickname', 'like', "%{$search}%");
+                    $query->whereLike('name', "%{$search}%")
+                        ->orWhereLike('nickname', "%{$search}%");
                 });
             })
             ->when(in_array($status, ['active', 'inactive'], true), function ($query) use ($status) {
